@@ -68,8 +68,25 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findById(id);
-    const similarProducts = await Product.find({ category: product.category });
+    const similarProducts = await Product.find({
+      category: product.category,
+    }).limit(5);
     res.status(200).json({ product, similarProducts });
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.get("/category/:category", async (req, res) => {
+  const { category } = req.params;
+  try {
+    let products;
+    if (category === "all") {
+      products = await Product.find().sort([{ date: -1 }]);
+    } else {
+      products = await Product.find({ category });
+    }
+    res.status(200).json(products);
   } catch (error) {
     res.status(400).send(error.message);
   }

@@ -25,7 +25,7 @@ export default function ProductPage() {
     useEffect(() => {
         axios.get(`/products/${id}`).then(({ data }) => {
             setProduct(data.product)
-            setSimilar(data.similar)
+            setSimilar(data.similarProducts)
         })
     }, [id])
 
@@ -34,7 +34,7 @@ export default function ProductPage() {
         return <Loading />
     }
 
-    const images = product.pictures.map((picture, i) => <img className='product_carousel--image' src={picture.url} onDragCapture={handleDrag} key={i} />)
+    const images = product.pictures.map((picture, i) => <img className='product_carousel--image' src={picture.url} onDragStart={handleDrag} key={i} />)
 
     const responsive = {
         0: { items: 1 },
@@ -44,12 +44,13 @@ export default function ProductPage() {
 
     let similarProducts = []
     if (similar) {
-        similarProducts = similar.map((product, idx) => {
-            <div className='item' data-value={idx} key={product._id}>
+        similarProducts = similar.map((product, idx) => (
+            <div className='item' data-value={idx} key={product._id} >
                 <SimilarProduct {...product} />
-            </div>
-        })
+            </div >
+        ))
     }
+    console.log(similar, similarProducts)
     return (
         <Container className='pt-4' style={{ position: 'relative' }}>
             <Row>
