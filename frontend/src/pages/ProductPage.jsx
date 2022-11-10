@@ -11,12 +11,14 @@ import SimilarProduct from '../components/SimilarProduct'
 import './style/ProductPage.css'
 import "react-alice-carousel/lib/alice-carousel.css";
 import { LinkContainer } from 'react-router-bootstrap'
+import { useAddToCartMutation } from '../services/appApi'
 
 export default function ProductPage() {
     const { id } = useParams()
     const user = useSelector(state => state.user)
     const [product, setProduct] = useState(null)
     const [similar, setSimilar] = useState(null)
+    const [addToCart, { isSuccess }] = useAddToCartMutation()
 
     const handleDrag = e => {
         e.preventDefault()
@@ -50,7 +52,7 @@ export default function ProductPage() {
             </div >
         ))
     }
-    console.log(similar, similarProducts)
+    console.log(similar, similarProducts, user)
     return (
         <Container className='pt-4' style={{ position: 'relative' }}>
             <Row>
@@ -75,7 +77,7 @@ export default function ProductPage() {
                                 <option value='4'>4</option>
                                 <option value='5'>5</option>
                             </Form.Select>
-                            <Button size='lg' disabled={!user}>
+                            <Button size='lg' disabled={!user} onClick={() => addToCart({userID: user._id, productId: id, price: product.price, image: product.pictures[0].url})}>
                                 Add to cart
                             </Button>
                         </ButtonGroup>

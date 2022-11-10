@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Product = require("../models/Product");
+const User = require('../models/user')
 
 // get all products
 router.get("/", async (req, res) => {
@@ -82,11 +83,87 @@ router.get("/category/:category", async (req, res) => {
   try {
     let products;
     if (category === "all") {
-      products = await Product.find().sort([{ date: -1 }]);
+      products = await Product.find().sort([['date', -1]]);
     } else {
       products = await Product.find({ category });
     }
     res.status(200).json(products);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+
+// cart route 
+router.post("/add-to-cart", async (req, res) => {
+  const { userID, productId, price } = req.body;
+  console.log(req.body)
+  try {
+    const user = await User.findById(userID)
+    console.log(user)
+    const userCart = user.cart;
+    if (user.cart[productId]) {
+      userCart[productId] += 1
+    } else {
+      userCart[productId] = 1
+    }
+    userCart.count += 1
+    userCart.total = Number(userCart.total) + Number(price)
+    user.cart = userCart
+    user.markModified('cart')
+    await user.save()
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.post("/increase-cart", async (req, res) => {
+  const { userId, productId, price } = req.body;
+  try {
+    const user = await User.findById(userId)
+    const userCart = user.cart;
+    userCart.count += 1
+    userCart.total += Number(price)
+    userCart[productId] += 1
+    user.cart = userCart
+    user.markModified('cart')
+    await user.save()
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.post("/decrease-cart", async (req, res) => {
+  const { userId, productId, price } = req.body;
+  try {
+    const user = await User.findById(userId)
+    const userCart = user.cart;
+    userCart.count -= 1
+    userCart.total -= Number(price)
+    userCart[productId] -= 1
+    user.cart = userCart
+    user.markModified('cart')
+    await user.save()
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+router.delete("/remove-from-cart", async (req, res) => {
+  const { userId, productId, price } = req.body;
+  try {
+    const user = await User.findById(userId)
+    const userCart = user.cart;
+    userCart.total -= Number(userCart[productId]) * Number(price)
+    userCart.count -= userCart[productId]
+    delete userCart[productId]
+    user.cart = userCart
+    user.markModified('cart')
+    await user.save()
+    res.status(200).json(user);
   } catch (error) {
     res.status(400).send(error.message);
   }

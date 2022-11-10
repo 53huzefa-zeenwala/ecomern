@@ -8,6 +8,7 @@ import './style/Navigation.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from "react-bootstrap";
 import { logout } from "../features/userSlice";
+import CartPage from "../pages/CartPage";
 
 export default function Navigation() {
   const user = useSelector(state => state.user)
@@ -26,6 +27,15 @@ export default function Navigation() {
           <Nav className="ms-auto">
             {!user && <LinkContainer to="/login">
               <Nav.Link>Login</Nav.Link>
+            </LinkContainer>
+            }
+            {user && !user.isAdmin && <LinkContainer to="/cart" style={{paddingRight: '2rem'}}>
+              <Nav.Link>
+                <i className="fas fa-shopping-cart"></i>
+                {user?.cart.count > 0 && (
+                  <span className="badge badge-warning" id="cartcount">{user.cart.count}</span>
+                )}
+              </Nav.Link>
             </LinkContainer>
             }
             {user && (
