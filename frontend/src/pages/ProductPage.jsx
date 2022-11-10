@@ -12,6 +12,7 @@ import './style/ProductPage.css'
 import "react-alice-carousel/lib/alice-carousel.css";
 import { LinkContainer } from 'react-router-bootstrap'
 import { useAddToCartMutation } from '../services/appApi'
+import ToastMessage from '../components/ToastMessage'
 
 export default function ProductPage() {
     const { id } = useParams()
@@ -52,7 +53,6 @@ export default function ProductPage() {
             </div >
         ))
     }
-    console.log(similar, similarProducts, user)
     return (
         <Container className='pt-4' style={{ position: 'relative' }}>
             <Row>
@@ -89,6 +89,7 @@ export default function ProductPage() {
                     )}
                 </Col>
             </Row>
+            {isSuccess && <ToastMessage bg={'info'} title='Added to cart' body={`${product.name} is in your cart`} />} 
             <div className="my-4">
                 <h2>Similar Products</h2>
                 <div className="d-flex justify-content-center align-items-center flex-wrap">

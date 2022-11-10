@@ -43,9 +43,9 @@ export const appApi = createApi({
       }),
     }),
     // increase cart product
-    icreaseCartProduct: builder.mutation({
+    increaseCartProduct: builder.mutation({
       query: (body) => ({
-        url: "/products/icrease-cart",
+        url: "/products/increase-cart",
         method: "POST",
         body,
       }),
@@ -61,6 +61,6 @@ export const appApi = createApi({
   }),
 });
 
-export const {useSignupMutation, useLoginMutation, useCreateProductMutation, useAddToCartMutation, useIcreaseCartProductMutation, useRemoveFromCartMutation, useDecreaseCartProductMutation} = appApi
+export const {useSignupMutation, useLoginMutation, useCreateProductMutation, useAddToCartMutation, useIncreaseCartProductMutation, useRemoveFromCartMutation, useDecreaseCartProductMutation} = appApi
 
 export default appApi

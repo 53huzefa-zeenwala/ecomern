@@ -97,10 +97,8 @@ router.get("/category/:category", async (req, res) => {
 // cart route 
 router.post("/add-to-cart", async (req, res) => {
   const { userID, productId, price } = req.body;
-  console.log(req.body)
   try {
     const user = await User.findById(userID)
-    console.log(user)
     const userCart = user.cart;
     if (user.cart[productId]) {
       userCart[productId] += 1

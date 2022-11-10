@@ -8,7 +8,6 @@ import './style/Navigation.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from "react-bootstrap";
 import { logout } from "../features/userSlice";
-import CartPage from "../pages/CartPage";
 
 export default function Navigation() {
   const user = useSelector(state => state.user)
