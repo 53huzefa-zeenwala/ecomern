@@ -35,7 +35,7 @@ router.patch("/:id", async (req, res) => {
   const { name, description, price, category, images: pictures } = req.body;
   const { id } = req.params;
   try {
-    const product = await Product.findById(id, {
+    const product = await Product.findByIdAndUpdate(id, {
       name,
       description,
       price,
@@ -50,11 +50,13 @@ router.patch("/:id", async (req, res) => {
 });
 
 // delete product
-router.delete("/", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const { user_id } = req.body;
+  console.log(user_id)
   try {
-    const user = await Product.findById(user_id);
+    const user = await User.findById(user_id);
+    console.log(user)
     if (!user.isAdmin) return res.status(401).send("You don't have permission");
     await Product.findByIdAndDelete(id);
     const products = await Product.find();

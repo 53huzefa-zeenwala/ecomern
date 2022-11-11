@@ -25,6 +25,7 @@ export default function OrdersPage() {
             })
 
     }, [])
+    console.log(orders)
 
     if (loading) {
         return <Loading />

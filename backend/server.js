@@ -15,13 +15,14 @@ const userRoute = require("./routes/userRoute");
 const Product = require("./models/Product");
 const productRoute = require("./routes/productRoute");
 const imageRoute = require("./routes/imageRoute");
-
+const orderRoute = require('./routes/orderRoute')
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/users", userRoute);
 app.use("/products", productRoute);
 app.use("/images", imageRoute);
+app.use("/orders", orderRoute);
 
 app.post('/create-payment', async (req, res) =>  {
   const {amount} = req.body

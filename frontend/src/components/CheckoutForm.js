@@ -28,16 +28,15 @@ export default function CheckoutForm() {
         body: JSON.stringify({ amount: user.cart.total }),
       }
     ).then((res) => res);
-    createOrder({ userId: user._id, cart: user.cart, address, country }).then(
-      (res) => {
-        if (!isLoading && !isError) {
-          setAlertMessage(`Payment successfully`);
-          setTimeout(() => {
-            navigate("/orders");
-          }, 3000);
-        }
+
+    createOrder({ userId: user._id, cart: user.cart, address, country }).then((res) => {
+      if (!isLoading && !isError) {
+        setAlertMessage(`Payment successfully`);
+        setTimeout(() => {
+          navigate("/orders");
+        }, 3000);
       }
-    );
+    });
     setPaying(false);
   };
   return (

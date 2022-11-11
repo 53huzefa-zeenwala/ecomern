@@ -83,7 +83,7 @@ export default function ProductPage() {
                         </ButtonGroup>
                     )}
                     {user && user.isAdmin && (
-                        <LinkContainer to={`/product/${id}/edit`}>
+                        <LinkContainer to={`/products/${id}/edit`}>
                             <Button size='lg' >Edit Prouct</Button>
                         </LinkContainer>
                     )}

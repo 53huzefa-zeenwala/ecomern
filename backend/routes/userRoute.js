@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/user");
+const Order = require('../models/Order')
 
 // signup
 router.post("/signup", async (req, res) => {
@@ -28,22 +29,34 @@ router.post("/login", async (req, res) => {
 
 // get users
 router.get("/", async (req, res) => {
-    try {
-      const users = await User.find({isAdmin: false}).populate('orders');
-      res.status(200).json(users);
-    } catch (error) {
-      res.status(400).send(error.message);
-    }
-  });
+  try {
+    const users = await User.find({ isAdmin: false }).populate('orders');
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
 
 router.get("/:id", async (req, res) => {
+  const { id } = req.params
+  try {
+    const users = await User.findById(id)
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
+// get user order
+router.get("/:id/orders", async (req, res) => {
   const {id} = req.params
-    try {
-      const users = await User.findById(id)
-      res.status(200).json(users);
-    } catch (error) {
-      res.status(400).send(error.message);
-    }
-  });
+  try {
+    const user = await User.findById(id).populate('orders');
+    res.status(200).json(user.orders);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
+
 
 module.exports = router;
