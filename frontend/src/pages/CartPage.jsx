@@ -1,15 +1,16 @@
 import React from 'react'
-import { Alert, Col, Container, Row, Table } from 'react-bootstrap'
+import { Alert, Col, Container, Row, Table, Elements } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import './style/CartPage.css'
 import { useDecreaseCartProductMutation, useIncreaseCartProductMutation, useRemoveFromCartMutation } from '../services/appApi'
+import CheckoutForm from '../components/CheckoutForm'
 export default function CartPage() {
     const user = useSelector(state => state.user)
     const products = useSelector(state => state.products)
     const userCartObj = user.cart
     let cart = products.filter((product) => userCartObj[product._id] != null)
     const [increaseCart] = useIncreaseCartProductMutation()
-    const [decreaeCart] = useDecreaseCartProductMutation()
+    const [decreaseCart] = useDecreaseCartProductMutation()
     const [removeFromCart, {isLoading}] = useRemoveFromCartMutation()
 
     const handleDecrease = ( product) => {
@@ -17,7 +18,7 @@ export default function CartPage() {
         if (quantity <= 0) {
             return alert("can't proceed")
         }
-        decreaeCart(product)
+        decreaseCart(product)
     }
 
     return (
@@ -29,7 +30,7 @@ export default function CartPage() {
                     {cart.length === 0 ? (
                         <Alert variant='info' >Shopping cart is empty. Add products to your cart</Alert>
                     ) : (
-                        <div>Payment here</div>
+                        <CheckoutForm />
                     )}
                 </Col>
                 <Col md={5}>

@@ -23,6 +23,16 @@ app.use("/users", userRoute);
 app.use("/products", productRoute);
 app.use("/images", imageRoute);
 
+app.post('/create-payment', async (req, res) =>  {
+  const {amount} = req.body
+  try {
+    res.status(200).send(`payment successfully ${amount}`)
+  } catch (error) {
+    res.status(400).json(error.message)
+    
+  }
+})
+
 server.listen(8000, () => {
   console.log("server is connected at port 8000");
 });
