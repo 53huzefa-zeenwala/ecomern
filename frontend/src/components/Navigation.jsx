@@ -1,20 +1,40 @@
-import React from "react";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import React, { useRef, useState } from "react";
+import { Navbar, Button, Nav, NavDropdown, Container } from "react-bootstrap"
 import { LinkContainer } from "react-router-bootstrap";
 import './style/Navigation.css'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button } from "react-bootstrap";
-import { logout } from "../features/userSlice";
+import { logout, resetNotifications } from "../features/userSlice";
+import axios from "../axios";
 
 export default function Navigation() {
   const user = useSelector(state => state.user)
+  console.log(user)
   const dispatch = useDispatch()
   const handleLogout = () => {
     dispatch(logout())
   }
+  const bellRef = useRef(null)
+  const notificationRef = useRef(null)
+  const [bellPos, setBellPos] = useState({})
+
+  const unreadNotifications = user?.notifications?.reduce((acc, current) => {
+    console.log(acc, user.notifications)
+    if (current.status === "unread") {
+      return acc + 1
+    }
+    return acc
+  }, 0)
+
+  const handleToggleNotification = () => {
+    const position = bellRef.current.getBoundingClientRect()
+    setBellPos(position)
+    notificationRef.current.style.display = notificationRef.current.style.display === "block" ? "none" : "block";
+    dispatch(resetNotifications())
+    if (unreadNotifications > 0) {
+      axios.post(`/users/${user._id}/updateNotifications`)
+    }
+  }
+  console.log(user?.notifications, unreadNotifications)
   return (
     <Navbar bg="light" expand="lg">
       <Container>
@@ -28,7 +48,7 @@ export default function Navigation() {
               <Nav.Link>Login</Nav.Link>
             </LinkContainer>
             }
-            {user && !user.isAdmin && <LinkContainer to="/cart" style={{paddingRight: '2rem'}}>
+            {user && !user.isAdmin && <LinkContainer to="/cart" style={{ paddingRight: '2rem' }}>
               <Nav.Link>
                 <i className="fas fa-shopping-cart"></i>
                 {user?.cart.count > 0 && (
@@ -38,35 +58,53 @@ export default function Navigation() {
             </LinkContainer>
             }
             {user && (
-              <NavDropdown title={user.name} id="basic-nav-dropdown">
-                {user.isAdmin && (
-                  <>
-                    <LinkContainer to={'/admin'}>
-                      <NavDropdown.Item>Dashboard</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to={'/new-product'}>
-                      <NavDropdown.Item>Create Product</NavDropdown.Item>
-                    </LinkContainer>
-                    <NavDropdown.Divider />
-                  </>
-                )}
-                {!user.isAdmin && (
-                  <>
-                    <LinkContainer to={'/cart'}>
-                      <NavDropdown.Item>Cart</NavDropdown.Item>
-                    </LinkContainer>
-                    <LinkContainer to={'/orders'}>
-                      <NavDropdown.Item>My orders</NavDropdown.Item>
-                    </LinkContainer>
-                    <NavDropdown.Divider />
-                  </>
-                )}
-                <Button variant="danger" onClick={handleLogout} className="logout-btn">Logout</Button>
-              </NavDropdown>
+              <>
+                <Nav.Link style={{ position: "relative" }} onClick={handleToggleNotification}>
+                  <i className="fas fa-bell" ref={bellRef} data-count={unreadNotifications || null}></i>
+                </Nav.Link>
+                <NavDropdown title={user.name} id="basic-nav-dropdown">
+                  {user.isAdmin ? (
+                    <>
+                      <LinkContainer to={'/admin'}>
+                        <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to={'/new-product'}>
+                        <NavDropdown.Item>Create Product</NavDropdown.Item>
+                      </LinkContainer>
+                      <NavDropdown.Divider />
+                    </>
+                  ) : (
+                    <>
+                      <LinkContainer to={'/cart'}>
+                        <NavDropdown.Item>Cart</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to={'/orders'}>
+                        <NavDropdown.Item>My orders</NavDropdown.Item>
+                      </LinkContainer>
+                      <NavDropdown.Divider />
+                    </>
+                  )}
+                  <Button variant="danger" onClick={handleLogout} className="logout-btn">Logout</Button>
+                </NavDropdown>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
       </Container>
+      {/* notifications */}
+      <div className="notifications-container" ref={notificationRef} style={{ position: "absolute", top: bellPos.top + 30, left: bellPos.left, display: "none" }}>
+        {user?.notifications.length > 0 ? (
+          user?.notifications.map((notification) => (
+            <p className={`notification-${notification.status}`}>
+              {notification.message}
+              <br />
+              <span>{notification.time.split("T")[0] + " " + notification.time.split("T")[1]}</span>
+            </p>
+          ))
+        ) : (
+          <p>No notifcations yet</p>
+        )}
+      </div>
     </Navbar>
   );
 }

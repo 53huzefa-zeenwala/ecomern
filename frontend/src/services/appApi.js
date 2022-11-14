@@ -46,7 +46,7 @@ export const appApi = createApi({
     addToCart: builder.mutation({
       query: (cartInfo) => ({
         url: "/products/add-to-cart",
-        method: "DELETE",
+        method: "POST",
         body: cartInfo,
       }),
     }),

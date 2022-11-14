@@ -6,8 +6,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 require("./connection");
 const io = new Server(server, {
-  cors: "*",
-  method: "*",
+  cors: "://localhost:3000",
+  method: ['GET', 'POST', "PATCH", 'DELETE'],
 });
 
 const User = require("./models/user");

@@ -18,6 +18,10 @@ const OrderSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    count: {
+      type: Number,
+      default: 0
+    },
     date: {
       type: String,
       default: new Date().toISOString().split("T")[0],
